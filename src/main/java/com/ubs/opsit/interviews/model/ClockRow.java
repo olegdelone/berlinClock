@@ -1,66 +1,81 @@
 package com.ubs.opsit.interviews.model;
 
+import com.ubs.opsit.interviews.model.clock.MengenlehreuhrClock;
+import com.ubs.opsit.interviews.model.rprsntr.Representable;
+import com.ubs.opsit.interviews.model.rprsntr.SimpleStringRepresenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Calendar;
 
 /**
  * Created by Oleg_Obukhov on 17.02.2016.
  */
-public abstract class ClockRow {
+public abstract class ClockRow implements LightsComposite {
     private static final Logger LOG = LoggerFactory.getLogger(ClockRow.class);
 
-    protected ClockRow() {
+    private final int timeItemsPerChunk;
+    private final int chunksCount;
+
+    protected final Representable<String> representable; // bridge
+
+    protected ClockRow(int timeItemsPerChunk, int chunksCount, Representable<String> representable) {
+        this.timeItemsPerChunk = timeItemsPerChunk;
+        this.chunksCount = chunksCount;
+        this.representable = representable;
     }
 
     public enum LightType {
         RED, YELLOW, OFF;
-        private String representationCode = this.name().substring(0,1); // R\Y\O
+
+        private String representationCode = this.name().substring(0, 1); // R\Y\O
 
         public String getRepresentationCode() {
             return representationCode;
         }
+
     }
-
-    protected abstract int getTimeItemsPerChunk();
-
-    protected abstract int getChunksCount();
 
     protected abstract LightType getCurrentChunkColor(int time, int i);
 
-
     /**
      * factory method
-     * @param type calendar type
-     */
-//    public ClockRow createRow(int type, int timePart){
-//        ClockRow clockRow;
-//        if(type == Calendar.HOUR_OF_DAY) {
-//            clockRow = new FirstHoursRow();
-//            clockRow.
-////            int reminder = (timePart % clockRow.getTimeItemsPerChunk()) ;
-////            clockRow.getChunks(timePart - reminder);
-//        }
-//    }
-    /**
      *
-     * @param timeItems prepared to show
-     * @return
+     * @param type
+     *            to be created
      */
-    protected LightType[] getChunks(int timeItems) {
-//        int cnt = timeItems/(getTimeItemsPerChunk() * getChunksCount());
-//        if(cnt > 0){
-//            timeItems -= cnt*getTimeItemsPerChunk() * getChunksCount();
-//        }
-//        LOG.info("time items: {} {}", timeItems, cnt);
-//        if(timeItems)
-        int filledLen = timeItems/getTimeItemsPerChunk();
-        LightType[] r = new LightType[getChunksCount()];
-        for (int i = 0, l = getChunksCount(); i < l;i++) {
+    public static ClockRow createRow(MengenlehreuhrClock.Lit type) {
+        ClockRow clockRow;
+        Representable<String> representable = new SimpleStringRepresenter(); // todo
+        if (type == MengenlehreuhrClock.Lit.HOURS_FIRST) {
+            clockRow = new FirstHoursRow(type.getTimeItemsPerChunk(), type.getChunksCount(), representable);
+        } else if (type == MengenlehreuhrClock.Lit.HOURS_SECOND) {
+            clockRow = new SecondHoursRow(type.getTimeItemsPerChunk(), type.getChunksCount(), representable);
+        } else if (type == MengenlehreuhrClock.Lit.MINUTES_SECOND) {
+            clockRow = new SecondMinutesRow(type.getTimeItemsPerChunk(), type.getChunksCount(), representable);
+        } else if (type == MengenlehreuhrClock.Lit.MINUTES_FIRST) {
+            clockRow = new FirstMinutesRow(type.getTimeItemsPerChunk(), type.getChunksCount(), representable);
+        } else if (type == MengenlehreuhrClock.Lit.SECONDS) {
+            clockRow = new SecondsRow(type.getTimeItemsPerChunk(), type.getChunksCount(), representable);
+        } else {
+            throw new IllegalArgumentException("Arg [Lit type] is not supported: " + type);
+        }
+        return clockRow;
+    }
+
+    public String representSelf(int timePart) {
+        return representable.represent(calculateChunks(timePart));
+    }
+
+    protected LightType[] calculateChunks(int timePart) {
+        int capacity = timeItemsPerChunk * chunksCount;
+        if (timePart < 0 || timePart > capacity) {
+            throw new IllegalArgumentException("arg violated [timePart < 0 || timePart > "+capacity+"]");
+        }
+        int toBeFilledLen = timePart / timeItemsPerChunk;
+        LightType[] r = new LightType[chunksCount];
+        for (int i = 0; i < chunksCount; i++) {
             LightType type;
-            if(i< filledLen) {
-                type = getCurrentChunkColor(timeItems, i+1);
+            if (i < toBeFilledLen) {
+                type = getCurrentChunkColor(timePart, i + 1);
             } else {
                 type = LightType.OFF;
             }
@@ -70,8 +85,7 @@ public abstract class ClockRow {
         return r;
     }
 
-
-//    enum Lit {
-//        SECONDS, HOURS_FIRST, HOURS_SECOND, MINUTES_FIRST, MINUTES_SECOND
-//    }
+    public int getTimeItemsPerChunk() {
+        return timeItemsPerChunk;
+    }
 }
