@@ -1,25 +1,29 @@
 package com.ubs.opsit.interviews.model;
 
-import com.ubs.opsit.interviews.model.clock.MengenlehreuhrClock;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Oleg_Obukhov on 17.02.2016.
  */
-public class HoursRow implements LightsComposite {
+public class HoursRow implements LitRecalculableComposite {
 
-    private final LightsComposite firstHoursRow;
-    private final LightsComposite secondHoursRow;
+    private final LitRecalculableComposite firstHoursRow;
+    private final LitRecalculableComposite secondHoursRow;
 
-    public HoursRow() {
-        this.firstHoursRow = ClockRow.createRow(MengenlehreuhrClock.Lit.HOURS_FIRST);
-        this.secondHoursRow = ClockRow.createRow(MengenlehreuhrClock.Lit.HOURS_SECOND);
+    public HoursRow(LitRecalculableComposite firstHoursRow, LitRecalculableComposite secondHoursRow) {
+        this.firstHoursRow = firstHoursRow;
+        this.secondHoursRow = secondHoursRow;
     }
 
     @Override
-    public String representSelf(int timePart) {
-        int itemsPerChunk = MengenlehreuhrClock.Lit.HOURS_FIRST.getTimeItemsPerChunk();
+    public List<ClockRow.LightType[]> recalculate(int timePart) {
+        int itemsPerChunk = LitFactory.Lit.HOURS_FIRST.getTimeItemsPerChunk();
         int pure = (timePart / itemsPerChunk) * itemsPerChunk;
         int reminder = timePart - pure;
-        return firstHoursRow.representSelf(pure) + "\r\n" + secondHoursRow.representSelf(reminder);
+        return new ArrayList<ClockRow.LightType[]>(){{
+            add(firstHoursRow.recalculate(pure).get(0));
+            add(secondHoursRow.recalculate(reminder).get(0));
+        }} ;
     }
 }

@@ -1,13 +1,11 @@
 package com.ubs.opsit.interviews.model;
 
-import com.ubs.opsit.interviews.model.rprsntr.Representable;
-
 /**
  * Created by Oleg_Obukhov on 17.02.2016.
  */
 class FirstMinutesRow extends ClockRow{
-    public FirstMinutesRow(int timeItemsPerChunk, int chunksCount, Representable<String> representable) {
-        super(timeItemsPerChunk, chunksCount, representable);
+    public FirstMinutesRow(int timeItemsPerChunk, int chunksCount) {
+        super(timeItemsPerChunk, chunksCount);
     }
 
     @Override
