@@ -11,14 +11,14 @@ public class ClockRow implements LitCalculable {
 
     private final LightType[] lights;
     private final int timeItemsPerChunk;
-    private final Colorer colorer;
+    private final LightProvider lightProvider;
     private final int chunksCount;
 
-    ClockRow(int timeItemsPerChunk, int chunksCount, Colorer colorer) {
+    ClockRow(int timeItemsPerChunk, int chunksCount, LightProvider lightProvider) {
         // todo null checking
         this.timeItemsPerChunk = timeItemsPerChunk;
         this.chunksCount = chunksCount;
-        this.colorer = colorer;
+        this.lightProvider = lightProvider;
         this.lights = new LightType[chunksCount];
     }
 
@@ -40,7 +40,7 @@ public class ClockRow implements LitCalculable {
         for (int i = 0, filledLen = timePart / timeItemsPerChunk; i < chunksCount; i++) {
             LightType type;
             if (i < filledLen) {
-                type = colorer.doColoring(timePart, i + 1);
+                type = lightProvider.provide(timePart, i + 1);
             } else {
                 type = LightType.OFF;
             }
@@ -53,7 +53,7 @@ public class ClockRow implements LitCalculable {
         return lights;
     }
 
-    interface Colorer {
-        LightType doColoring(int time, int step);
+    interface LightProvider {
+        LightType provide(int time, int step);
     }
 }
