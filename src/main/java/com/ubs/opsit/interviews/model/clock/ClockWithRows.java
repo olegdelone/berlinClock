@@ -7,7 +7,7 @@ import com.ubs.opsit.interviews.view.Representable;
  * Created by Oleg_Obukhov on 18.02.2016.
  */
 public abstract class ClockWithRows implements Iterable<ClockRow.LightType[]> {
-    private final Representable<String, ClockRow.LightType[]> representable; // bridge
+    private final Representable<String, ClockRow.LightType[]> representable;
 
     protected ClockWithRows(Representable<String, ClockRow.LightType[]> representable) {
         this.representable = representable;

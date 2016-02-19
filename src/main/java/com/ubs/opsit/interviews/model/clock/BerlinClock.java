@@ -13,6 +13,7 @@ import java.util.Iterator;
  */
 public class BerlinClock extends ClockWithRows {
 
+    // JDK-6625725 : (coll) modCount should not be volatile
     private int mod;
     private final LitCalculable secs = LitFactory.createRow(LitFactory.Lit.SECONDS);
     private final LitCalculable hrsFirst = LitFactory.createRow(LitFactory.Lit.HOURS_FIRST);

@@ -14,37 +14,32 @@ public class ClockRow implements LitCalculable {
     private final Colorer colorer;
     private final int chunksCount;
 
-     ClockRow(int timeItemsPerChunk, int chunksCount, Colorer colorer) {
-         // todo null checking
+    ClockRow(int timeItemsPerChunk, int chunksCount, Colorer colorer) {
+        // todo null checking
         this.timeItemsPerChunk = timeItemsPerChunk;
         this.chunksCount = chunksCount;
         this.colorer = colorer;
         this.lights = new LightType[chunksCount];
     }
 
-
     @Override
     public int calculateChunks(int timePart) {
+        if (timePart < 0 ) {
+            throw new IllegalArgumentException("arg [int timePart] violates condition [timePart < 0]");
+        }
         int capacity = timeItemsPerChunk * chunksCount;
         int reminder = 0;
-        if(timePart > capacity){
+        if (timePart > capacity) {
             reminder = timePart - capacity;
             timePart = capacity;
-        } else {
-            if(timeItemsPerChunk > 1){
-                int pure = (timePart/timeItemsPerChunk)*timeItemsPerChunk;
-                reminder = timePart - pure;
-                timePart = pure;
-            }
+        } else if (timeItemsPerChunk > 1) {
+            int pure = (timePart / timeItemsPerChunk) * timeItemsPerChunk;
+            reminder = timePart - pure;
+            timePart = pure;
         }
-
-        if (timePart < 0 || timePart > capacity) {
-            throw new IllegalArgumentException("arg violated [timePart < 0 || timePart > " + capacity + "]");
-        }
-        int toBeFilledLen = timePart / timeItemsPerChunk;
-        for (int i = 0; i < chunksCount; i++) {
+        for (int i = 0, filledLen = timePart / timeItemsPerChunk; i < chunksCount; i++) {
             LightType type;
-            if (i < toBeFilledLen) {
+            if (i < filledLen) {
                 type = colorer.doColoring(timePart, i + 1);
             } else {
                 type = LightType.OFF;
