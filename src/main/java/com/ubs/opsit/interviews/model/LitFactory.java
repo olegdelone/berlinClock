@@ -1,16 +1,12 @@
 package com.ubs.opsit.interviews.model;
 
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Created by Oleg_Obukhov on 18.02.2016.
  */
 public class LitFactory {
 
     public enum Lit {
-        HOURS_FIRST(5, 4), HOURS_SECOND(1, 4), MINUTES_FIRST(5, 11), MINUTES_SECOND(1, 4);
+        HOURS_FIRST(5, 4), HOURS_SECOND(1, 4), MINUTES_FIRST(5, 11), MINUTES_SECOND(1, 4), SECONDS(1, 1);
         private final int timeItemsPerChunk;
         private final int chunksCount;
 
@@ -28,38 +24,42 @@ public class LitFactory {
         }
     }
 
-    public static ClockRow createRow(Lit type) {
-            ClockRow clockRow;
-            if (type == Lit.HOURS_FIRST) {
-                clockRow = new FirstHoursRow(type.getTimeItemsPerChunk(), type.getChunksCount());
-            } else if (type == Lit.HOURS_SECOND) {
-                clockRow = new SecondHoursRow(type.getTimeItemsPerChunk(), type.getChunksCount());
-            } else if (type == Lit.MINUTES_SECOND) {
-                clockRow = new SecondMinutesRow(type.getTimeItemsPerChunk(), type.getChunksCount());
-            } else if (type == Lit.MINUTES_FIRST) {
-                clockRow = new FirstMinutesRow(type.getTimeItemsPerChunk(), type.getChunksCount());
-            } else {
-                throw new IllegalArgumentException("Such arg [Lit type] is not supported: " + type);
-            }
-            return clockRow;
-    }
+    public static LitCalculable createRow(Lit type) {
+        ClockRow clockRow;
+        if (type == Lit.HOURS_FIRST) {
+            clockRow = new ClockRow(type.getTimeItemsPerChunk(), type.getChunksCount(),
+                                    (time, step) -> ClockRow.LightType.RED);
 
-    public static LitRecalculableComposite createComposite(int calendarType) {
-        if (calendarType == Calendar.HOUR_OF_DAY) {
-            LitRecalculableComposite composite1 = createRow(Lit.HOURS_FIRST);
-            LitRecalculableComposite composite2 = createRow(Lit.HOURS_SECOND);
-            return new HoursRow(composite1, composite2);
-        } else if (calendarType == Calendar.MINUTE) {
-            LitRecalculableComposite composite1 = createRow(Lit.MINUTES_FIRST);
-            LitRecalculableComposite composite2 = createRow(Lit.MINUTES_SECOND);
-            return new MinutesRow(composite1, composite2);
-        } else if (calendarType == Calendar.SECOND){
-            return time -> {
-                ClockRow.LightType lightType = (time & 1) != 0 ? ClockRow.LightType.OFF : ClockRow.LightType.YELLOW;
-                return Collections.singletonList(new ClockRow.LightType[]{lightType});
+        } else if (type == Lit.HOURS_SECOND) {
+            clockRow = new ClockRow(type.getTimeItemsPerChunk(), type.getChunksCount(),
+                                    (time, step) -> ClockRow.LightType.RED);
+
+        } else if (type == Lit.MINUTES_SECOND) {
+            clockRow = new ClockRow(type.getTimeItemsPerChunk(), type.getChunksCount(),
+                                    (time, step) -> ClockRow.LightType.YELLOW);
+
+        } else if (type == Lit.MINUTES_FIRST) {
+            clockRow = new ClockRow(type.getTimeItemsPerChunk(), type.getChunksCount(),
+                                    (time, step) -> step % 3 == 0 ? ClockRow.LightType.RED : ClockRow.LightType.YELLOW);
+
+        } else if (type == Lit.SECONDS) {
+            return new LitCalculable() {
+                private final ClockRow.LightType[] l = new ClockRow.LightType[1];
+                @Override
+                public int calculateChunks(int time) {
+                    l[0] = (time & 1) != 0 ? ClockRow.LightType.OFF : ClockRow.LightType.YELLOW;
+                    return --time;
+                }
+
+                @Override
+                public ClockRow.LightType[] getLights() {
+                    return l;
+                }
             };
         } else {
-            throw new IllegalArgumentException("Such arg [int calendarType] = " + calendarType + " is not supperted");
+            throw new IllegalArgumentException("Such arg [Lit type] is not supported: " + type);
         }
+        return clockRow;
     }
+
 }

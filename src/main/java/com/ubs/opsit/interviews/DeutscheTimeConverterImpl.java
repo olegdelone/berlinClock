@@ -1,6 +1,6 @@
 package com.ubs.opsit.interviews;
 
-import com.ubs.opsit.interviews.service.MengenlehreuhrTimeConverterService;
+import com.ubs.opsit.interviews.service.DeutscheTimeConverterService;
 import com.ubs.opsit.interviews.service.TimeConverterService;
 import com.ubs.opsit.interviews.service.TimeConverterServiceException;
 
@@ -10,7 +10,7 @@ import com.ubs.opsit.interviews.service.TimeConverterServiceException;
 public class DeutscheTimeConverterImpl implements TimeConverter {
 
 
-    private TimeConverterService timeConverterService = new MengenlehreuhrTimeConverterService(); // todo Ioc
+    private TimeConverterService timeConverterService = new DeutscheTimeConverterService(); // todo Ioc
 
     @Override
     public String convertTime(String aTime) {

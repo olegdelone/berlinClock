@@ -13,7 +13,7 @@ import com.ubs.opsit.interviews.view.SimpleStringRepresenter;
 /**
  * Created by Oleg_Obukhov on 17.02.2016.
  */
-public class MengenlehreuhrTimeConverterService implements TimeConverterService{
+public class DeutscheTimeConverterService implements TimeConverterService{
     ClockWithRows mengenlehreuhrClock = new BerlinClock(new SimpleStringRepresenter()); // ioc openClosed
 
     @Override

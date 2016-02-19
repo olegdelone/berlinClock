@@ -2,24 +2,28 @@ package com.ubs.opsit.interviews.view;
 
 import com.ubs.opsit.interviews.model.ClockRow;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by Oleg_Obukhov on 17.02.2016.
  */
-public class SimpleStringRepresenter implements Representable<String> {
+public class SimpleStringRepresenter implements Representable<String, ClockRow.LightType[]> {
 
     @Override
-    public String represent(List<ClockRow.LightType[]> lightTypesList) {
+    public String represent(Iterable<ClockRow.LightType[]> iterable) {
         StringBuilder r = new StringBuilder();
-        for (int i = 0, s = lightTypesList.size(); i < s; i++) {
-            for (ClockRow.LightType lightType : lightTypesList.get(i)) {
+        Iterator<ClockRow.LightType[]> iterator = iterable.iterator();
+
+        while (iterator.hasNext()){
+            for (ClockRow.LightType lightType : iterator.next()) {
                 r.append(lightType.name().substring(0, 1)); // R Y O
             }
-            if(i != s-1){
+            if(iterator.hasNext()){
                 r.append("\r\n");
             }
         }
         return r.toString();
+
     }
 }

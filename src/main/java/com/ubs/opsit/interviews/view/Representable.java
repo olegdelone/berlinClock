@@ -7,6 +7,6 @@ import java.util.List;
 /**
  * Created by Oleg_Obukhov on 17.02.2016.
  */
-public interface Representable<T> {
-    T represent(List<ClockRow.LightType[]> lightTypes);
+public interface Representable<T, I> {
+    T represent(Iterable<I> iterable);
 }

@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 public class TimeConverterServiceTest {
     private static final Logger LOG = LoggerFactory.getLogger(TimeConverterServiceTest.class);
 
-    TimeConverterService timeConverterService = new MengenlehreuhrTimeConverterService();
+    TimeConverterService timeConverterService = new DeutscheTimeConverterService();
 
     @Test
     public void test() throws TimeConverterServiceException {

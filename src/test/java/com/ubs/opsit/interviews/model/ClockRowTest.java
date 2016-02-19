@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.Calendar;
 
 /**
  * Created by Oleg_Obukhov on 17.02.2016.
@@ -18,47 +17,62 @@ public class ClockRowTest {
     @Test
     public void testSecondsRow() {
         LOG.info("let's begin..");
-        LitRecalculableComposite clockRow = LitFactory.createComposite(Calendar.SECOND);
-        ClockRow.LightType[] lightTypes = clockRow.recalculate(1).get(0);
-        Assert.assertArrayEquals(lightTypes, new ClockRow.LightType[] { ClockRow.LightType.OFF });
+        LitCalculable clockRow = LitFactory.createRow(LitFactory.Lit.SECONDS);
+        clockRow.calculateChunks(1);
+        ClockRow.LightType[] lightTypes = clockRow.getLights();
+        Assert.assertArrayEquals(lightTypes, new ClockRow.LightType[]{ClockRow.LightType.OFF});
 
-        lightTypes = clockRow.recalculate(2).get(0);
-        Assert.assertArrayEquals(lightTypes, new ClockRow.LightType[] { ClockRow.LightType.YELLOW });
+        clockRow.calculateChunks(2);
+        lightTypes = clockRow.getLights();
+        Assert.assertArrayEquals(lightTypes, new ClockRow.LightType[]{ClockRow.LightType.YELLOW});
 
-        lightTypes = clockRow.recalculate(0).get(0);
-        Assert.assertArrayEquals(lightTypes, new ClockRow.LightType[] { ClockRow.LightType.YELLOW });
+        clockRow.calculateChunks(0);
+        lightTypes = clockRow.getLights();
+        Assert.assertArrayEquals(lightTypes, new ClockRow.LightType[]{ClockRow.LightType.YELLOW});
 
-        lightTypes = clockRow.recalculate(10).get(0);
-        Assert.assertArrayEquals(lightTypes, new ClockRow.LightType[] { ClockRow.LightType.YELLOW });
+        clockRow.calculateChunks(10);
+        lightTypes = clockRow.getLights();
+        Assert.assertArrayEquals(lightTypes, new ClockRow.LightType[]{ClockRow.LightType.YELLOW});
 
-        lightTypes = clockRow.recalculate(100).get(0);
-        Assert.assertArrayEquals(lightTypes, new ClockRow.LightType[] { ClockRow.LightType.YELLOW });
+        clockRow.calculateChunks(100);
+        lightTypes = clockRow.getLights();
+        Assert.assertArrayEquals(lightTypes, new ClockRow.LightType[]{ClockRow.LightType.YELLOW});
 
-        lightTypes = clockRow.recalculate(101).get(0);
-        Assert.assertArrayEquals(lightTypes, new ClockRow.LightType[] { ClockRow.LightType.OFF });
+        clockRow.calculateChunks(101);
+        lightTypes = clockRow.getLights();
+        Assert.assertArrayEquals(lightTypes, new ClockRow.LightType[]{ClockRow.LightType.OFF});
 
     }
 
     @Test
     public void testFirstHoursRow() {
         LOG.info("let's begin..");
-        ClockRow clockRow = LitFactory.createRow(LitFactory.Lit.HOURS_FIRST);
-        ClockRow.LightType[] offs = new ClockRow.LightType[] { ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF };
+        LitCalculable clockRow = LitFactory.createRow(LitFactory.Lit.HOURS_FIRST);
+        ClockRow.LightType[] offs = new ClockRow.LightType[]{ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF};
 
-        ClockRow.LightType[] lightTypes = clockRow.calculateChunks(1);
+        clockRow.calculateChunks(1);
+        ClockRow.LightType[]  lightTypes = clockRow.getLights();
         Assert.assertArrayEquals(lightTypes, offs);
-        lightTypes = clockRow.calculateChunks(2);
+        clockRow.calculateChunks(2);
+        lightTypes = clockRow.getLights();
         Assert.assertArrayEquals(lightTypes, offs);
-        lightTypes = clockRow.calculateChunks(0);
+        clockRow.calculateChunks(0);
+        lightTypes = clockRow.getLights();
         Assert.assertArrayEquals(lightTypes, offs);
-        lightTypes = clockRow.calculateChunks(3);
+        clockRow.calculateChunks(3);
+        lightTypes = clockRow.getLights();
+
         Assert.assertArrayEquals(lightTypes, offs);
-        lightTypes = clockRow.calculateChunks(5);
+        clockRow.calculateChunks(5);
+        lightTypes = clockRow.getLights();
+
         Assert.assertArrayEquals(lightTypes,
                 new ClockRow.LightType[]{ClockRow.LightType.RED, ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF});
-        lightTypes = clockRow.calculateChunks(11);
+        clockRow.calculateChunks(11);
+        lightTypes = clockRow.getLights();
+
         Assert.assertArrayEquals(lightTypes,
-                new ClockRow.LightType[] { ClockRow.LightType.RED, ClockRow.LightType.RED, ClockRow.LightType.OFF, ClockRow.LightType.OFF });
+                new ClockRow.LightType[]{ClockRow.LightType.RED, ClockRow.LightType.RED, ClockRow.LightType.OFF, ClockRow.LightType.OFF});
 
 
     }
@@ -66,26 +80,37 @@ public class ClockRowTest {
     @Test
     public void testSecondHoursRow() {
         LOG.info("let's begin..");
-        ClockRow clockRow = LitFactory.createRow(LitFactory.Lit.HOURS_SECOND);
-        ClockRow.LightType[] lightTypes = clockRow.calculateChunks(0);
-        Assert.assertArrayEquals(lightTypes,
-                new ClockRow.LightType[] { ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF });
+        LitCalculable clockRow = LitFactory.createRow(LitFactory.Lit.HOURS_SECOND);
 
-        lightTypes = clockRow.calculateChunks(1);
-        Assert.assertArrayEquals(lightTypes,
-                new ClockRow.LightType[] { ClockRow.LightType.RED, ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF });
 
-        lightTypes = clockRow.calculateChunks(2);
+        clockRow.calculateChunks(0);
+        ClockRow.LightType[] lightTypes = clockRow.getLights();
         Assert.assertArrayEquals(lightTypes,
-                new ClockRow.LightType[] { ClockRow.LightType.RED, ClockRow.LightType.RED, ClockRow.LightType.OFF, ClockRow.LightType.OFF });
+                new ClockRow.LightType[]{ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF});
 
-        lightTypes = clockRow.calculateChunks(3);
-        Assert.assertArrayEquals(lightTypes,
-                new ClockRow.LightType[] { ClockRow.LightType.RED, ClockRow.LightType.RED, ClockRow.LightType.RED, ClockRow.LightType.OFF });
+        clockRow.calculateChunks(1);
+        lightTypes = clockRow.getLights();
 
-        lightTypes = clockRow.calculateChunks(4);
         Assert.assertArrayEquals(lightTypes,
-                new ClockRow.LightType[] { ClockRow.LightType.RED, ClockRow.LightType.RED, ClockRow.LightType.RED, ClockRow.LightType.RED });
+                new ClockRow.LightType[]{ClockRow.LightType.RED, ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF});
+
+        clockRow.calculateChunks(2);
+        lightTypes = clockRow.getLights();
+
+        Assert.assertArrayEquals(lightTypes,
+                new ClockRow.LightType[]{ClockRow.LightType.RED, ClockRow.LightType.RED, ClockRow.LightType.OFF, ClockRow.LightType.OFF});
+
+        clockRow.calculateChunks(3);
+        lightTypes = clockRow.getLights();
+
+        Assert.assertArrayEquals(lightTypes,
+                new ClockRow.LightType[]{ClockRow.LightType.RED, ClockRow.LightType.RED, ClockRow.LightType.RED, ClockRow.LightType.OFF});
+
+        clockRow.calculateChunks(4);
+        lightTypes = clockRow.getLights();
+
+        Assert.assertArrayEquals(lightTypes,
+                new ClockRow.LightType[]{ClockRow.LightType.RED, ClockRow.LightType.RED, ClockRow.LightType.RED, ClockRow.LightType.RED});
 
 
     }
@@ -93,8 +118,11 @@ public class ClockRowTest {
     @Test
     public void testFirstMinutesRow() {
         LOG.info("let's begin..");
-        ClockRow clockRow = LitFactory.createRow(LitFactory.Lit.MINUTES_FIRST);;
-        ClockRow.LightType[] lightTypes = clockRow.calculateChunks(0);
+        LitCalculable clockRow = LitFactory.createRow(LitFactory.Lit.MINUTES_FIRST);
+
+        clockRow.calculateChunks(0);
+        ClockRow.LightType[] lightTypes = clockRow.getLights();
+
         Assert.assertArrayEquals(lightTypes,
                 new ClockRow.LightType[]{ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF,
                         ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF,
@@ -102,16 +130,21 @@ public class ClockRowTest {
                         ClockRow.LightType.OFF, ClockRow.LightType.OFF,
                 });
 
-        lightTypes = clockRow.calculateChunks(10);
+        clockRow.calculateChunks(10);
+        lightTypes = clockRow.getLights();
+
         LOG.info("lightTypes: {}", Arrays.toString(lightTypes));
         Assert.assertArrayEquals(lightTypes,
-                new ClockRow.LightType[] { ClockRow.LightType.YELLOW, ClockRow.LightType.YELLOW, ClockRow.LightType.OFF,
+                new ClockRow.LightType[]{ClockRow.LightType.YELLOW, ClockRow.LightType.YELLOW, ClockRow.LightType.OFF,
                         ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF,
                         ClockRow.LightType.OFF, ClockRow.LightType.OFF, ClockRow.LightType.OFF,
                         ClockRow.LightType.OFF, ClockRow.LightType.OFF,
                 });
 
-        lightTypes = clockRow.calculateChunks(16);
+
+        clockRow.calculateChunks(16);
+        lightTypes = clockRow.getLights();
+
         LOG.info("lightTypes: {}", Arrays.toString(lightTypes));
         Assert.assertArrayEquals(lightTypes,
                 new ClockRow.LightType[]{ClockRow.LightType.YELLOW, ClockRow.LightType.YELLOW, ClockRow.LightType.RED,
@@ -121,11 +154,13 @@ public class ClockRowTest {
                 });
 
 
-        lightTypes = clockRow.calculateChunks(51);
+        clockRow.calculateChunks(51);
+        lightTypes = clockRow.getLights();
+
         Assert.assertArrayEquals(lightTypes,
-                new ClockRow.LightType[] { ClockRow.LightType.YELLOW, ClockRow.LightType.YELLOW, ClockRow.LightType.RED,
-                       ClockRow.LightType.YELLOW, ClockRow.LightType.YELLOW, ClockRow.LightType.RED,
-                       ClockRow.LightType.YELLOW, ClockRow.LightType.YELLOW, ClockRow.LightType.RED,
+                new ClockRow.LightType[]{ClockRow.LightType.YELLOW, ClockRow.LightType.YELLOW, ClockRow.LightType.RED,
+                        ClockRow.LightType.YELLOW, ClockRow.LightType.YELLOW, ClockRow.LightType.RED,
+                        ClockRow.LightType.YELLOW, ClockRow.LightType.YELLOW, ClockRow.LightType.RED,
                         ClockRow.LightType.YELLOW, ClockRow.LightType.OFF,
                 });
 
